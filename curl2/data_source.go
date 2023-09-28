@@ -118,7 +118,30 @@ func (c *curl2DataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 	}
 
 	for eachHeaderKey, eachHeaderValue := range config.Headers.Elements() {
-		newReq.Header.Set(eachHeaderKey, eachHeaderValue.String())
+
+		// convert to string
+		tfval, err := eachHeaderValue.ToTerraformValue(ctx)
+		if err != nil {
+			resp.Diagnostics.AddError(
+				"Unable to create new http request",
+				err.Error(),
+			)
+			return
+		}
+		var headerString string
+		tfval.As(&headerString)
+		if err != nil {
+			resp.Diagnostics.AddError(
+				"Unable to create new http request",
+				err.Error(),
+			)
+			return
+		}
+
+		newReq.Header.Set(eachHeaderKey, headerString)
+	}
+	if resp.Diagnostics.HasError() {
+		return
 	}
 
 	if config.AuthType.ValueString() != "" {
