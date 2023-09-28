@@ -1,7 +1,7 @@
 terraform {
   required_providers {
     curl2 = {
-      source = "mehulgohil/curl2"
+      source  = "mehulgohil/curl2"
       version = "1.6.1"
     }
   }
@@ -19,7 +19,7 @@ provider "curl2" {
 
 data "curl2" "getPosts" {
   http_method = "GET"
-  uri = "https://jsonplaceholder.typicode.com/posts"
+  uri         = "https://jsonplaceholder.typicode.com/posts"
   #  auth_type = "Basic"
   #  basic_auth_username = "<UserName>"
   #  basic_auth_password = "<Password>"
@@ -38,8 +38,8 @@ output "all_posts_status" {
 
 data "curl2" "postPosts" {
   http_method = "POST"
-  uri = "https://jsonplaceholder.typicode.com/posts"
-  json = "{\"title\":\"foo\",\"body\":\"bar\",\"userId\":\"1\"}" //need the json in string format
+  uri         = "https://jsonplaceholder.typicode.com/posts"
+  data        = "{\"title\":\"foo\",\"body\":\"bar\",\"userId\":\"1\"}" // data could be json..
   #  auth_type = "Bearer"
   #  bearer_token = "<Any Bearer Token>"
   #  headers = {

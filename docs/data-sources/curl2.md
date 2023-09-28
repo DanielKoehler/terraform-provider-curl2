@@ -54,7 +54,7 @@ output "all_posts_status" {
 data "curl2" "postPosts" {
   http_method = "POST"
   uri = "https://jsonplaceholder.typicode.com/posts"
-  json = "{\"title\":\"foo\",\"body\":\"bar\",\"userId\":\"1\"}" //need the json in string format
+  data = "{\"title\":\"foo\",\"body\":\"bar\",\"userId\":\"1\"}" //need the json in string format
   #  auth_type = "Bearer"
   #  bearer_token = "<Any Bearer Token>"
   #  headers = {
@@ -83,7 +83,7 @@ output "post_posts_output" {
 - `basic_auth_username` (String) Username to be used for Basic Authentication.
 - `bearer_token` (String, Sensitive) Bearer Token to be used for Authentication.
 - `headers` (Map of String) Headers to be added.
-- `json` (String) JSON object in string format if using POST, PUT or PATCH method.
+- `data` (String) JSON object in string format if using POST, PUT or PATCH method.
 
 ### Read-Only
 

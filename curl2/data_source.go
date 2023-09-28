@@ -3,13 +3,13 @@ package curl2
 import (
 	"bytes"
 	"context"
-	"encoding/json"
+	"io"
+
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"io"
 )
 
 var (
@@ -24,7 +24,7 @@ func NewCurl2DataSource() datasource.DataSource {
 type curl2DataModelRequest struct {
 	URI               types.String `tfsdk:"uri"`
 	HTTPMethod        types.String `tfsdk:"http_method"`
-	JSON              types.String `tfsdk:"json"`
+	DATA              types.String `tfsdk:"data"`
 	Response          types.Object `tfsdk:"response"`
 	AuthType          types.String `tfsdk:"auth_type"`
 	BearerToken       types.String `tfsdk:"bearer_token"`
@@ -53,8 +53,8 @@ func (c *curl2DataSource) Schema(ctx context.Context, req datasource.SchemaReque
 				Description: "HTTP method like GET, POST, PUT, DELETE, PATCH.",
 				Required:    true,
 			},
-			"json": schema.StringAttribute{
-				Description: "JSON object in string format if using POST, PUT or PATCH method.",
+			"data": schema.StringAttribute{
+				Description: "data body in string format if using POST, PUT or PATCH method.",
 				Optional:    true,
 			},
 			"response": schema.ObjectAttribute{
@@ -104,25 +104,8 @@ func (c *curl2DataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 
 	var body io.Reader = nil
 
-	if config.JSON.ValueString() != "" {
-		var jsonData interface{}
-		if err := json.Unmarshal([]byte(config.JSON.ValueString()), &jsonData); err != nil {
-			resp.Diagnostics.AddError(
-				"Failed to parse JSON parameter",
-				err.Error(),
-			)
-			return
-		}
-
-		requestBody, err := json.Marshal(jsonData)
-		if err != nil {
-			resp.Diagnostics.AddError(
-				"Failed to marshal JSON data",
-				err.Error(),
-			)
-			return
-		}
-		body = bytes.NewBuffer(requestBody)
+	if config.DATA.ValueString() != "" {
+		body = bytes.NewBuffer([]byte(config.DATA.ValueString()))
 	}
 
 	newReq, err := retryablehttp.NewRequest(config.HTTPMethod.ValueString(), config.URI.ValueString(), body)
