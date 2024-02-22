@@ -1,5 +1,7 @@
 # terraform-provider-curl2
 
+This fork allows data boyd value to not be only JSON. It also fixes the header functionality.
+
 ## Overview
 terraform-provider-curl2 is designed to help make HTTP(s) requests,
 with additional support for providing JSON bodies and authentication headers.
